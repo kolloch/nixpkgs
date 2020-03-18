@@ -15558,6 +15558,8 @@ in
 
   jetty = callPackage ../servers/http/jetty { };
 
+  jitsi-videobridge = callPackage ../servers/jitsi-videobridge { };
+
   keycloak = callPackage ../servers/keycloak { };
 
   knot-dns = callPackage ../servers/dns/knot-dns { };
