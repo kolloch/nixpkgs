@@ -35,15 +35,13 @@
     build_bin = if buildTests then "build_bin_test" else "build_bin";
   in ''
     runHook preBuild
- 
+
     # configure & source common build functions
     LIB_RUSTC_OPTS="${libRustcOpts}"
     BIN_RUSTC_OPTS="${binRustcOpts}"
     LIB_EXT="${stdenv.hostPlatform.extensions.sharedLibrary}"
     LIB_PATH="${libPath}"
     LIB_NAME="${libName}"
-
-    CRATE_NAME='${lib.replaceStrings ["-"] ["_"] libName}'
 
     setup_link_paths
 

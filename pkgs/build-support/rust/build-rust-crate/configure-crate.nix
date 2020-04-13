@@ -39,7 +39,7 @@ in ''
   noisily cd "${workspace_member}"
 ''}
   ${lib.optionalString (workspace_member == null) ''
-  echo_colored "Searching for matching Cargo.toml (${crateName})" 
+  echo_colored "Searching for matching Cargo.toml (${crateName})"
   local cargo_toml_dir=$(matching_cargo_toml_dir "${crateName}")
   if [ -z "$cargo_toml_dir" ]; then
     echo_error "ERROR configuring ${crateName}: No matching Cargo.toml in $(pwd) found." >&2
@@ -49,7 +49,7 @@ in ''
 ''}
 
   runHook preConfigure
- 
+
   symlink_dependency() {
     # $1 is the nix-store path of a dependency
     # $2 is the target path
@@ -145,6 +145,8 @@ in ''
   export RUSTC="rustc"
   export RUSTDOC="rustdoc"
 
+  CRATE_NAME='${lib.replaceStrings ["-"] ["_"] libName}'
+
   BUILD=""
   if [[ ! -z "${build}" ]] ; then
      BUILD=${build}
@@ -179,9 +181,12 @@ in ''
        export $env
      done
 
-     CRATENAME=$(echo ${crateName} | sed -e "s/\(.*\)-sys$/\U\1/")
+     CRATENAME=$(echo "$CRATE_NAME" | sed -e "s/\(.*\)_sys$/\U\1/")
      grep -P "^cargo:(?!(rustc-|warning=|rerun-if-changed=|rerun-if-env-changed))" target/build/${crateName}.opt \
-       | sed -e "s/cargo:\([^=]*\)=\(.*\)/export DEP_$(echo $CRATENAME)_\U\1\E=\2/" > target/env
+       | while read instruction; do
+        local varname=$(sed -e 's/cargo:\([^=]*\)=\(.*\)/\U\1\E/' | sed -e s/-/_/ )
+        sed -e "s/cargo:\([^=]*\)=\(.*\)/export DEP_$CRATENAME_$varname=\2/" >> target/env
+       done
      set -e
   fi
   runHook postConfigure
