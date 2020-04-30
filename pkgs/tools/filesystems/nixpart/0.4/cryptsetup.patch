@@ -1,0 +1,55 @@
+diff --git a/configure.ac b/configure.ac
+index 1309b278465802a57656601fcea4e0d488d658f3..053285121adab1b4510a501612dc260c40ba5f5c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -37,7 +37,7 @@ PKG_PROG_PKG_CONFIG
+ AC_HEADER_DIRENT
+ AC_HEADER_STDC
+ AC_CHECK_HEADERS(fcntl.h malloc.h inttypes.h sys/ioctl.h sys/mman.h \
+-	ctype.h unistd.h locale.h byteswap.h endian.h)
++	sys/sysmacros.h ctype.h unistd.h locale.h byteswap.h endian.h)
+
+ AC_CHECK_HEADERS(uuid/uuid.h,,[AC_MSG_ERROR([You need the uuid library.])])
+ AC_CHECK_HEADER(libdevmapper.h,,[AC_MSG_ERROR([You need the device-mapper library.])])
+diff --git a/lib/utils_devpath.c b/lib/utils_devpath.c
+index 963785a3c94f185aafe926eb9a40eb9601680469..1e0933a1cfc0cd21f139e8934b21ac76909ab02d 100644
+--- a/lib/utils_devpath.c
++++ b/lib/utils_devpath.c
+@@ -31,6 +31,9 @@
+ #include <limits.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#ifdef HAVE_SYS_SYSMACROS_H
++# include <sys/sysmacros.h>     /* for major, minor */
++#endif
+ #include "internal.h"
+
+ static char *__lookup_dev(char *path, dev_t dev, int dir_level, const int max_level)
+diff --git a/lib/utils_loop.c b/lib/utils_loop.c
+index ff30a27cac5be57d3f04761a43e76dd0a4c930cc..8f303ca8bfceff73817244473bff3581e1b9683c 100644
+--- a/lib/utils_loop.c
++++ b/lib/utils_loop.c
+@@ -28,6 +28,9 @@
+ #include <sys/ioctl.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#ifdef HAVE_SYS_SYSMACROS_H
++# include <sys/sysmacros.h>     /* for major, minor */
++#endif
+ #include <linux/loop.h>
+
+ #include "utils_loop.h"
+diff --git a/lib/utils_wipe.c b/lib/utils_wipe.c
+index 210c566a8c5a86ba6d242721a1a85b07a2809ac0..2b47bca035868667c5c450844f4f7840d7f2f436 100644
+--- a/lib/utils_wipe.c
++++ b/lib/utils_wipe.c
+@@ -29,6 +29,9 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
++#ifdef HAVE_SYS_SYSMACROS_H
++# include <sys/sysmacros.h>     /* for major, minor */
++#endif
+ #include <fcntl.h>
+
+ #include "libcryptsetup.h"

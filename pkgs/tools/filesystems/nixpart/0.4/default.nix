@@ -1,4 +1,5 @@
-{ stdenv, fetchurl, python, buildPythonApplication
+{ stdenv, fetchurl, fetchgit, python, buildPythonApplication
+, gettext, autoconf, automake, libtool
 , libselinux
 # Propagated to blivet
 , useNixUdev ? true
@@ -17,8 +18,8 @@ let
   };
 
   cryptsetup = import ./cryptsetup.nix {
-    inherit stdenv fetchurl python;
-    inherit (pkgs) pkgconfig libgcrypt libuuid popt lvm2;
+    inherit stdenv fetchgit python;
+    inherit (pkgs) pkgconfig libgcrypt libuuid popt lvm2 gettext autoconf automake libtool;
   };
 
   dmraid = import ./dmraid.nix {
