@@ -113,15 +113,18 @@ let
       noipv6
     ''}
 
-    ${lib.optionalString (
-      config.networking.enableIPv6 && cfg.IPv6rs == null && staticIPv6Addresses != [ ]
-    ) noIPv6rs}
     ${lib.optionalString (config.networking.enableIPv6 && cfg.IPv6rs == false) ''
       noipv6rs
     ''}
     ${lib.optionalString cfg.setHostname "option host_name"}
 
     ${cfg.extraConfig}
+
+    # Last: dhcpcd applies the options after an `interface` line to that
+    # interface only, so global options above must not follow one.
+    ${lib.optionalString (
+      config.networking.enableIPv6 && cfg.IPv6rs == null && staticIPv6Addresses != [ ]
+    ) noIPv6rs}
   '';
 
 in
